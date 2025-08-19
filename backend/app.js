@@ -1,14 +1,19 @@
-const express = require('express');
-const cors = require('cors');
-const productosRoutes = require('./routes/productosRoutes');
-const usuariosRoutes = require('./routes/usuariosRoutes');
-
+const express = require("express");
+const cors = require("cors");
 const app = express();
+
+// Middlewares globales
 app.use(cors());
 app.use(express.json());
 
-app.use('/productos', productosRoutes);
-app.use('/usuarios', usuariosRoutes);
+// Rutas públicas
+app.use("/auth", require("./routes/auth"));
+
+// Rutas protegidas
+app.use("/usuarios", require("./routes/usuariosRoutes"));
+
+// Rutas de productos (pueden estar abiertas o protegerlas con verifyToken si querés)
+app.use("/productos", require("./routes/productosRoutes"));
 
 const PORT = 3001;
-app.listen(PORT, () => console.log(`Servidor en http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`Servidor corriendo en http://localhost:${PORT}`));

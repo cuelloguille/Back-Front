@@ -1,7 +1,13 @@
-import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, NavLink, Navigate } from 'react-router-dom';
 import ProductosView from './components/Productos/ProductosView';
 import PersonasView from './components/Personas/personasView';
+import Login from './components/login/login';
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+function PrivateRoute({ children }) {
+  const token = localStorage.getItem('token');
+  return token ? children : <Navigate to="/login" />;
+}
 
 function App() {
   return (
@@ -12,9 +18,7 @@ function App() {
             <li className="nav-item">
               <NavLink
                 to="/productos"
-                className={({ isActive }) =>
-                  'nav-link' + (isActive ? ' active' : '')
-                }
+                className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}
               >
                 Productos
               </NavLink>
@@ -22,9 +26,7 @@ function App() {
             <li className="nav-item">
               <NavLink
                 to="/personas"
-                className={({ isActive }) =>
-                  'nav-link' + (isActive ? ' active' : '')
-                }
+                className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}
               >
                 Personas
               </NavLink>
@@ -33,9 +35,24 @@ function App() {
         </nav>
 
         <Routes>
-          <Route path="/productos" element={<ProductosView />} />
-          <Route path="/personas" element={<PersonasView />} />
-          <Route path="*" element={<ProductosView />} />
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/productos"
+            element={
+              <PrivateRoute>
+                <ProductosView />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/personas"
+            element={
+              <PrivateRoute>
+                <PersonasView />
+              </PrivateRoute>
+            }
+          />
+          <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
       </div>
     </Router>
