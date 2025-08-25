@@ -7,13 +7,13 @@ app.use(cors());
 app.use(express.json());
 
 // Rutas públicas
-app.use("/auth", require("./routes/auth"));
+app.use("/", require("./routes/loginRoutes"));     // POST /login
+app.use("/", require("./routes/registerRoutes"));  // POST /register
 
-// Rutas protegidas
-app.use("/usuarios", require("./routes/usuariosRoutes"));
-
-// Rutas de productos (pueden estar abiertas o protegerlas con verifyToken si querés)
-app.use("/productos", require("./routes/productosRoutes"));
+// Rutas protegidas (ejemplo con verifyToken)
+const verifyToken = require("./middlewares/verifyToken");
+app.use("/usuarios", verifyToken, require("./routes/usuariosRoutes"));
+app.use("/productos", verifyToken, require("./routes/productosRoutes"));
 
 const PORT = 3001;
 app.listen(PORT, () => console.log(`Servidor corriendo en http://localhost:${PORT}`));

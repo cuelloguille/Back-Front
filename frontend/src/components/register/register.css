@@ -1,0 +1,34 @@
+.register-background {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.register-background::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/src/components/login/fondo.png'); /* cambia la ruta si está en otra carpeta */
+  background-size: cover;
+  background-position: center;
+  filter: blur(8px);
+  z-index: 0;
+}
+
+.register-form-container {
+  position: relative;
+  z-index: 1;
+  background-color: rgba(0, 0, 0, 0.6); /* más oscuro para contraste */
+  padding: 3rem;
+  border-radius: 1.5rem;
+  width: 400px;
+  color: white; /* texto claro sobre fondo oscuro */
+}
+

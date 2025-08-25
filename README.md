@@ -135,3 +135,10 @@ Hecho por [Guillermo Cuello] como parte del práctico integrador Fullstack.
 ## 🗂️ Licencia
 
 Este proyecto es de uso académico y personal.
+
+actualizaciones de proyecto 
+
+se añadio la validacion para tokens y encriptar los datos sensibles se pide token para crear objetos (persona y productos )
+
+tambien se mejoro la esteticamente con boobstrap y css 
+

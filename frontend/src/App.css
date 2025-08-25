@@ -1,0 +1,46 @@
+/* Fondo general de la app */
+body, html, #root {
+  height: 100%;
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  color: #f0f0f0;
+}
+
+/* Container principal */
+.container-fluid {
+  background-color: rgba(0, 0, 0, 0.6); /* fondo semitransparente */
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+}
+
+/* Navbar */
+.nav-tabs {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid #555;
+  border-radius: 8px;
+}
+
+.nav-tabs .nav-link {
+  color: #bbb;
+}
+
+.nav-tabs .nav-link.active {
+  color: #fff;
+  background-color: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.1) rgba(255,255,255,0.1) transparent;
+}
+
+/* Botón cerrar sesión */
+.btn-outline-danger {
+  color: #ff6b6b;
+  border-color: #ff6b6b;
+}
+
+.btn-outline-danger:hover {
+  background-color: #ff6b6b;
+  color: #121212;
+}
+
+/* Formularios y tablas se pueden mantener con estilo oscuro similar */
