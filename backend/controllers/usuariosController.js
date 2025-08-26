@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const bcrypt = require('bcrypt'); // 👈 encripta contraseñas
 const archivo = path.join(__dirname, '../data/usuarios.json');
 
 const getUsuarios = () => {
@@ -15,28 +16,43 @@ const saveUsuarios = (usuarios) => {
   fs.writeFileSync(archivo, JSON.stringify(usuarios, null, 2));
 };
 
+// Listar todos
 exports.listar = (req, res) => res.json(getUsuarios());
 
-exports.crear = (req, res) => {
+// Crear nuevo usuario con password encriptada
+exports.crear = async (req, res) => {
   const usuarios = getUsuarios();
-  const nuevo = { id: Date.now(), ...req.body };
+  const hashedPassword = await bcrypt.hash(req.body.password, 10); // 👈 hash
+  const nuevo = { 
+    id: Date.now(), 
+    username: req.body.username, 
+    role: req.body.role, 
+    password: hashedPassword 
+  };
   usuarios.push(nuevo);
   saveUsuarios(usuarios);
-  res.status(201).json(nuevo);
+  res.status(201).json({ id: nuevo.id, username: nuevo.username, role: nuevo.role }); 
 };
 
-exports.editar = (req, res) => {
+// Editar usuario (si mandan nueva password se re-encripta)
+exports.editar = async (req, res) => {
   const usuarios = getUsuarios();
   const index = usuarios.findIndex(u => u.id == req.params.id);
   if (index !== -1) {
-    usuarios[index] = { id: usuarios[index].id, ...req.body };
+    const usuario = usuarios[index];
+    usuario.username = req.body.username || usuario.username;
+    usuario.role = req.body.role || usuario.role;
+    if (req.body.password) {
+      usuario.password = await bcrypt.hash(req.body.password, 10);
+    }
     saveUsuarios(usuarios);
-    res.json(usuarios[index]);
+    res.json({ id: usuario.id, username: usuario.username, role: usuario.role });
   } else {
     res.status(404).json({ mensaje: 'Usuario no encontrado' });
   }
 };
 
+// Eliminar
 exports.eliminar = (req, res) => {
   const usuarios = getUsuarios().filter(u => u.id != req.params.id);
   saveUsuarios(usuarios);

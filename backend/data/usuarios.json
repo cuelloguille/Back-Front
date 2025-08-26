@@ -1,20 +1,8 @@
 [
   {
-    "id": 1756136183470,
-    "username": "lobo",
-    "password": "$2b$10$n.Uk76jdmtLNcSBE4d.MTejV10i0ucjdVoGblr/0NNYF5vZmV8A/u",
-    "role": "user"
-  },
-  {
-    "id": 1756136366995,
-    "username": "admin",
-    "password": "$2b$10$7KtSL/k6UxNDoTQws5nPaej1Qi9OaO37HInV1IpNtHvzipVnzqw6q",
-    "role": "user"
-  },
-  {
-    "id": 1756136835378,
-    "username": "40",
-    "password": "$2b$10$qfjXbEZoX/bQkF3LM0E/Uev75XRjibD0mMuhu0DjpiWBuvoqAnXri",
-    "role": "user"
+    "id": 1756240342533,
+    "username": "55",
+    "password": "$2b$10$wMLJkupweQ.utpns6F84euQGK39AgSCoCG2rBcb9p2v1969QYQcbm",
+    "role": "admin"
   }
 ]
