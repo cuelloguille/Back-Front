@@ -11,13 +11,11 @@ const ProductosView = () => {
   const API_URL = "http://localhost:3001/productos";
 
   const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role");
 
   useEffect(() => {
-    if (!token) {
-      navigate("/login");
-    } else {
-      fetchProductos();
-    }
+    if (!token) navigate("/login");
+    else fetchProductos();
   }, [token, navigate]);
 
   const fetchProductos = async () => {
@@ -31,6 +29,7 @@ const ProductosView = () => {
       if (err.response?.status === 401 || err.response?.status === 403) {
         alert("Token inválido o expirado. Por favor, inicia sesión de nuevo.");
         localStorage.removeItem("token");
+        localStorage.removeItem("role");
         navigate("/login");
       }
     }
@@ -83,16 +82,18 @@ const ProductosView = () => {
     <div className="container my-4">
       <h2 className="text-center mb-4">Productos</h2>
 
-      {/* Formulario Crear/Editar centrado */}
-      <div className="d-flex justify-content-center mb-4">
-        <ProductoForm
-          form={form}
-          setForm={setForm}
-          handleSubmit={handleSubmit}
-          editId={editId}
-          handleCancel={handleCancel}
-        />
-      </div>
+      {/* Formulario solo visible para admins */}
+      {role === "admin" && (
+        <div className="d-flex justify-content-center mb-4">
+          <ProductoForm
+            form={form}
+            setForm={setForm}
+            handleSubmit={handleSubmit}
+            editId={editId}
+            handleCancel={handleCancel}
+          />
+        </div>
+      )}
 
       {/* Tabla de productos */}
       <div className="table-responsive">
@@ -101,7 +102,7 @@ const ProductosView = () => {
             <tr>
               <th>Nombre</th>
               <th>Precio</th>
-              <th className="text-center">Acciones</th>
+              {role === "admin" && <th className="text-center">Acciones</th>}
             </tr>
           </thead>
           <tbody>
@@ -110,25 +111,27 @@ const ProductosView = () => {
                 <tr key={p.id}>
                   <td>{p.nombre}</td>
                   <td>${p.precio}</td>
-                  <td className="text-center">
-                    <button
-                      className="btn btn-sm btn-warning me-2"
-                      onClick={() => handleEdit(p)}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="btn btn-sm btn-danger"
-                      onClick={() => handleDelete(p.id)}
-                    >
-                      Borrar
-                    </button>
-                  </td>
+                  {role === "admin" && (
+                    <td className="text-center">
+                      <button
+                        className="btn btn-sm btn-warning me-2"
+                        onClick={() => handleEdit(p)}
+                      >
+                        Editar
+                      </button>
+                      <button
+                        className="btn btn-sm btn-danger"
+                        onClick={() => handleDelete(p.id)}
+                      >
+                        Borrar
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="3" className="text-center text-muted">
+                <td colSpan={role === "admin" ? 3 : 2} className="text-center text-muted">
                   No hay productos registrados
                 </td>
               </tr>

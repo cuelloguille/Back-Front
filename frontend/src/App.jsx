@@ -2,13 +2,20 @@ import { BrowserRouter as Router, Routes, Route, NavLink, Navigate, Outlet, useN
 import ProductosView from "./components/Productos/ProductosView";
 import PersonasView from "./components/Personas/personasView";
 import Login from "./components/login/login";
-import Register from "./components/register/register"; // 
+import Register from "./components/register/register";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
+
 // Componente para rutas privadas
 function PrivateRoute({ children }) {
   const token = localStorage.getItem("token");
-  return token ? children : <Navigate to="/login" />;
+  return token ? children : <Navigate to="/login" replace />;
+}
+
+// Componente para rutas públicas
+function PublicRoute({ children }) {
+  const token = localStorage.getItem("token");
+  return token ? <Navigate to="/productos" replace /> : children;
 }
 
 // Layout con Navbar (solo se muestra si estás logueado)
@@ -17,6 +24,7 @@ function Layout() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("role");
     navigate("/login");
   };
 
@@ -27,9 +35,7 @@ function Layout() {
           <li className="nav-item">
             <NavLink
               to="/productos"
-              className={({ isActive }) =>
-                "nav-link" + (isActive ? " active" : "")
-              }
+              className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}
             >
               Productos
             </NavLink>
@@ -37,9 +43,7 @@ function Layout() {
           <li className="nav-item">
             <NavLink
               to="/personas"
-              className={({ isActive }) =>
-                "nav-link" + (isActive ? " active" : "")
-              }
+              className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}
             >
               Personas
             </NavLink>
@@ -49,7 +53,7 @@ function Layout() {
           Cerrar sesión
         </button>
       </nav>
-      <Outlet /> {/* Aquí se renderizan las vistas hijas */}
+      <Outlet /> {/* Renderiza las vistas hijas */}
     </div>
   );
 }
@@ -59,10 +63,18 @@ function App() {
     <Router>
       <Routes>
         {/* Rutas públicas */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} /> {/*  */}
+        <Route
+          element={
+            <PublicRoute>
+              <Outlet />
+            </PublicRoute>
+          }
+        >
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Route>
 
-        {/* Rutas privadas con Layout */}
+        {/* Rutas privadas */}
         <Route
           element={
             <PrivateRoute>
@@ -75,12 +87,11 @@ function App() {
         </Route>
 
         {/* Redirecciones */}
-        <Route path="/" element={<Navigate to="/login" />} />
-        <Route path="*" element={<Navigate to="/login" />} />
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>
   );
 }
 
 export default App;
-
