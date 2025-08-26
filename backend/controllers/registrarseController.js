@@ -4,7 +4,7 @@ const path = require('path');
 const bcrypt = require('bcrypt'); // para encriptar contraseña
 const jwt = require('jsonwebtoken'); // para generar token
 
-const archivo = path.join(__dirname, '../data/admins.json');
+const archivo = path.join(__dirname, '../data/usuarios.json');
 
 // Función auxiliar: leer usuarios
 const getUsuarios = () => {

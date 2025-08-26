@@ -13,37 +13,25 @@ const PersonasForm = ({ form, setForm, handleSubmit, editId, handleCancel }) => 
         color: "#f0f0f0",
       }}
     >
-      <Form.Group className="mb-3 w-100" controlId="nombre">
-        <Form.Label>Nombre</Form.Label>
+      <Form.Group className="mb-3 w-100" controlId="username">
+        <Form.Label>Username</Form.Label>
         <Form.Control
           type="text"
-          placeholder="Ingrese nombre"
-          value={form.nombre}
-          onChange={(e) => setForm({ ...form, nombre: e.target.value })}
+          placeholder="Ingrese username"
+          value={form.username}
+          onChange={(e) => setForm({ ...form, username: e.target.value })}
           required
           style={{ backgroundColor: "#2c2c2c", color: "#f0f0f0", border: "1px solid #444" }}
         />
       </Form.Group>
 
-      <Form.Group className="mb-3 w-100" controlId="email">
-        <Form.Label>Email</Form.Label>
+      <Form.Group className="mb-3 w-100" controlId="role">
+        <Form.Label>Rol</Form.Label>
         <Form.Control
-          type="email"
-          placeholder="Ingrese email"
-          value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
-          required
-          style={{ backgroundColor: "#2c2c2c", color: "#f0f0f0", border: "1px solid #444" }}
-        />
-      </Form.Group>
-
-      <Form.Group className="mb-3 w-100" controlId="edad">
-        <Form.Label>Edad</Form.Label>
-        <Form.Control
-          type="number"
-          placeholder="Ingrese edad"
-          value={form.edad}
-          onChange={(e) => setForm({ ...form, edad: e.target.value })}
+          type="text"
+          placeholder="Ingrese rol"
+          value={form.role}
+          onChange={(e) => setForm({ ...form, role: e.target.value })}
           required
           style={{ backgroundColor: "#2c2c2c", color: "#f0f0f0", border: "1px solid #444" }}
         />
@@ -69,3 +57,4 @@ const PersonasForm = ({ form, setForm, handleSubmit, editId, handleCancel }) => 
 };
 
 export default PersonasForm;
+

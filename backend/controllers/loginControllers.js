@@ -3,7 +3,7 @@ const path = require("path");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const archivo = path.join(__dirname, "../data/admins.json");
+const archivo = path.join(__dirname, "../data/usuarios.json");
 
 const getUsuarios = () => {
   try {
