@@ -30,5 +30,12 @@ exports.login = async (req, res) => {
     { expiresIn: "1h" }
   );
 
-  res.json({ token });
+res.json({
+  token,
+  user: {
+    id: usuario.id,
+    username: usuario.username,
+    role: usuario.role
+  }
+});
 };

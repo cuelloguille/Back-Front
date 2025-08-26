@@ -11,6 +11,7 @@ const PersonasView = () => {
   const API_URL = "http://localhost:3001/usuarios";
 
   const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role");
 
   useEffect(() => {
     if (!token) navigate("/login");
@@ -28,6 +29,7 @@ const PersonasView = () => {
       if (err.response?.status === 401 || err.response?.status === 403) {
         alert("Token inválido o expirado. Por favor, inicia sesión de nuevo.");
         localStorage.removeItem("token");
+        localStorage.removeItem("role");
         navigate("/login");
       }
     }
@@ -80,25 +82,25 @@ const PersonasView = () => {
     <div className="container my-4">
       <h2 className="text-center mb-4">Usuarios</h2>
 
-      {/* Formulario */}
-      <div className="d-flex justify-content-center mb-4">
-        <PersonasForm
-          form={form}
-          setForm={setForm}
-          handleSubmit={handleSubmit}
-          editId={editId}
-          handleCancel={handleCancel}
-        />
-      </div>
+      {role === "admin" && (
+        <div className="d-flex justify-content-center mb-4">
+          <PersonasForm
+            form={form}
+            setForm={setForm}
+            handleSubmit={handleSubmit}
+            editId={editId}
+            handleCancel={handleCancel}
+          />
+        </div>
+      )}
 
-      {/* Tabla de usuarios */}
       <div className="table-responsive">
         <table className="table table-hover shadow-sm">
           <thead className="table-dark">
             <tr>
               <th>Usuario</th>
               <th>Rol</th>
-              <th className="text-center">Acciones</th>
+              {role === "admin" && <th className="text-center">Acciones</th>}
             </tr>
           </thead>
           <tbody>
@@ -107,20 +109,22 @@ const PersonasView = () => {
                 <tr key={u.id}>
                   <td>{u.username}</td>
                   <td>{u.role}</td>
-                  <td className="text-center">
-                    <button
-                      className="btn btn-sm btn-warning me-2"
-                      onClick={() => handleEdit(u)}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="btn btn-sm btn-danger"
-                      onClick={() => handleDelete(u.id)}
-                    >
-                      Borrar
-                    </button>
-                  </td>
+                  {role === "admin" && (
+                    <td className="text-center">
+                      <button
+                        className="btn btn-sm btn-warning me-2"
+                        onClick={() => handleEdit(u)}
+                      >
+                        Editar
+                      </button>
+                      <button
+                        className="btn btn-sm btn-danger"
+                        onClick={() => handleDelete(u.id)}
+                      >
+                        Borrar
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))
             ) : (
@@ -138,3 +142,4 @@ const PersonasView = () => {
 };
 
 export default PersonasView;
+

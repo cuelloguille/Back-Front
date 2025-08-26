@@ -1,9 +1,9 @@
 [
   {
     "id": 1756245143553,
-    "username": "125",
+    "username": "12",
     "password": "$2b$10$AJBFOM0ghrsaB2/9iLRmsOCLmcHu0TXqARyUBV08xfaEBoRoV3Ifi",
-    "role": "user"
+    "role": "users"
   },
   {
     "id": 1756245276477,
@@ -15,6 +15,18 @@
     "id": 1756245381953,
     "username": "regular",
     "password": "$2b$10$5gasxSj/HFL5DRWWTMpYsuNT7pJU8mEWK9phiBMMysCXazq751ZCG",
+    "role": "user"
+  },
+  {
+    "id": 1756249071068,
+    "username": "mari",
+    "password": "$2b$10$.KoAAB5WK67eaNRsxwdgXO6NNY6hRgsMN18OM4iGidIL9RmMtgDtq",
+    "role": "user"
+  },
+  {
+    "id": 1756249943356,
+    "username": "tester",
+    "password": "$2b$10$KsM11b.p6rdGFyHsDUZD8u2webnrWK16guOPqGtnC8bsigDigE8UG",
     "role": "user"
   }
 ]
