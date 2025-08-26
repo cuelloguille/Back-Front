@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const bcrypt = require('bcrypt'); // 👈 encripta contraseñas
+const bcrypt = require('bcrypt'); // 
 const archivo = path.join(__dirname, '../data/usuarios.json');
 
 const getUsuarios = () => {
@@ -22,7 +22,7 @@ exports.listar = (req, res) => res.json(getUsuarios());
 // Crear nuevo usuario con password encriptada
 exports.crear = async (req, res) => {
   const usuarios = getUsuarios();
-  const hashedPassword = await bcrypt.hash(req.body.password, 10); // 👈 hash
+  const hashedPassword = await bcrypt.hash(req.body.password, 10); // 
   const nuevo = { 
     id: Date.now(), 
     username: req.body.username, 
@@ -36,6 +36,9 @@ exports.crear = async (req, res) => {
 
 // Editar usuario (si mandan nueva password se re-encripta)
 exports.editar = async (req, res) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ mensaje: 'Solo los administradores pueden editar usuarios' });
+  }
   const usuarios = getUsuarios();
   const index = usuarios.findIndex(u => u.id == req.params.id);
   if (index !== -1) {
@@ -54,7 +57,11 @@ exports.editar = async (req, res) => {
 
 // Eliminar
 exports.eliminar = (req, res) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ mensaje: 'Solo los administradores pueden eliminar usuarios' });
+  }
   const usuarios = getUsuarios().filter(u => u.id != req.params.id);
   saveUsuarios(usuarios);
   res.status(204).end();
 };
+
