@@ -1,21 +1,16 @@
 const jwt = require("jsonwebtoken");
 
-function verifyToken(req, res, next) {
-  const authHeader = req.headers["authorization"]; // 🔹 siempre minúscula
-  if (!authHeader) {
-    return res.status(403).json({ mensaje: "Token requerido" });
-  }
+module.exports = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return res.status(401).json({ error: "Token requerido" });
 
-  const token = authHeader.split(" ")[1]; // 🔹 extraer token
-  if (!token) return res.status(403).json({ mensaje: "Token requerido" });
+  const token = authHeader.split(" ")[1];
 
   try {
     const decoded = jwt.verify(token, "secreto123");
-    req.user = decoded;
+    req.user = decoded; // id, username, role
     next();
-  } catch (err) {
-    return res.status(401).json({ mensaje: "Token inválido o expirado" });
+  } catch {
+    res.status(403).json({ error: "Token inválido" });
   }
-}
-
-module.exports = verifyToken;
+};
