@@ -1,21 +1,20 @@
+🛠️ Práctico Integrador Fullstack - Productos y Personas
 
-# 🛠️ Práctico Integrador Fullstack - Productos y Personas
+Este proyecto es un CRUD Fullstack desarrollado con React (Vite) en el frontend y Node.js + Express en el backend.
+La persistencia se realiza en archivos .json usando fs.
+Incluye autenticación con tokens, roles de usuario (admin / user), exportación a PDF, y estilos con Bootstrap 5.
 
-Este proyecto es un CRUD completo desarrollado con **React (Vite)** en el frontend y **Node.js + Express** en el backend, con persistencia de datos en archivos `.json` utilizando `fs`. Incluye funcionalidades de exportación a PDF y estilos con Bootstrap.
-
----
-
-## 📁 Estructura general del proyecto
-
-```
+📁 Estructura del proyecto
 /backend
 │   ├── server.js
 │   ├── /routes
 │   │    ├── productosRoutes.js
-│   │    └── usuariosRoutes.js
+│   │    ├── usuariosRoutes.js
+│   │    └── loginRoutes.js
 │   └── /controllers
 │        ├── productosController.js
-│        └── usuariosController.js
+│        ├── usuariosController.js
+│        └── authController.js
 
 /frontend
 │   ├── /src
@@ -28,117 +27,124 @@ Este proyecto es un CRUD completo desarrollado con **React (Vite)** en el fronte
 │   │    │    └── /Personas
 │   │    │         ├── PersonasView.jsx
 │   │    │         └── PersonaForm.jsx
-│   │    └── index.css
+│   │    └── /Auth
+│   │         ├── Login.jsx
+│   │         └── Register.jsx
 │   └── vite.config.js
-```
 
----
+🚀 Funcionalidades principales
+🔒 Autenticación y seguridad
 
-## 🚀 ¿Qué hace este proyecto?
+Login y Registro de usuarios con contraseña encriptada (bcrypt).
 
-### 🔧 Backend (Node.js + Express)
-- Rutas para productos (`/productos`) y personas (`/usuarios`)
-- Operaciones CRUD completas (GET, POST, PUT, DELETE)
-- Persistencia en archivos JSON usando `fs`
-- Middleware `cors` y `express.json()`
-- Controladores separados por entidad
+JWT tokens para validar sesiones activas.
 
-### 💻 Frontend (React)
-- CRUD de Productos:
-  - Formulario para crear y editar
-  - Listado en tabla
-  - Botones de eliminar y editar
-  - Exportación a PDF con `jsPDF` + `autoTable`
+Protección de rutas: no se puede acceder a productos ni personas sin estar logueado.
 
-- CRUD de Personas:
-  - Formulario para crear y editar
-  - Listado en tabla
-  - Botones de eliminar y editar
-  - Exportación a PDF
+Roles (admin / user):
 
-- Navegación con React Router DOM
-- Estilos con **Bootstrap 5** (modo claro)
-- Interfaz ordenada con pestañas (`NavLink`) para alternar entre productos y personas
-- Diseño responsive y centrado
+admin: puede crear, editar y eliminar usuarios.
 
----
+user: acceso limitado (no puede editar usuarios).
 
-## 🧾 Funcionalidades destacadas
+🛠️ Backend (Node.js + Express)
 
-### ✅ CRUD completo
-Ambas entidades (productos y personas) se pueden:
-- Crear
-- Leer
-- Editar
-- Eliminar
+Rutas para productos (/productos) y personas (/usuarios).
 
-### ✅ Exportación a PDF
-- Botón para descargar los listados como archivos PDF.
-- Implementado con las librerías:
-  - [`jspdf`](https://www.npmjs.com/package/jspdf)
-  - [`jspdf-autotable`](https://www.npmjs.com/package/jspdf-autotable)
+CRUD completo (GET, POST, PUT, DELETE).
 
-### 🎨 Estilos
-- Bootstrap integrado vía `import 'bootstrap/dist/css/bootstrap.min.css';`
-- Navegación en pestañas (`NavTabs`) con estilo activo
-- Formularios y tablas bien distribuidos y centrados
+Validación de tokens antes de acceder a las rutas protegidas.
 
----
+Persistencia en archivos JSON (fs).
 
-## ▶️ Cómo ejecutar el proyecto
+💻 Frontend (React + Vite)
 
-### Backend
+Home: página inicial con acceso al login.
 
+CRUD de Productos y Personas:
+
+Crear, listar, editar y eliminar.
+
+Listados en tabla con diseño responsive.
+
+Exportación a PDF (jspdf + jspdf-autotable).
+
+Bootstrap 5 + CSS personalizado para un diseño claro y moderno.
+
+Navegación con React Router DOM.
+
+🧾 Pasos para iniciar el proyecto
+
+Clonar el repositorio
+
+git clone <url-del-repo>
+
+
+Backend
 
 cd backend
 npm install
 node server.js
 
-Servidor corriendo en `http://localhost:3001`
 
-### Frontend
+Servidor disponible en: http://localhost:3001
 
+Frontend
 
 cd frontend
 npm install
 npm run dev
 
 
-App React corriendo en `http://localhost:5173`
+App disponible en: http://localhost:5173
 
----
+📦 Dependencias utilizadas
+Backend
 
-## 📦 Dependencias utilizadas
+express
 
-### Backend:
-- express
-- cors
-- fs (módulo nativo)
+cors
 
-### Frontend:
-- react
-- react-dom
-- react-router-dom
-- axios
-- bootstrap
-- jspdf
-- jspdf-autotable
+bcrypt
 
----
+jsonwebtoken
 
-## 🧑‍💻 Autor
+fs (módulo nativo)
 
-Hecho por [Guillermo Cuello] como parte del práctico integrador Fullstack.
+Frontend
 
----
+react
 
-## 🗂️ Licencia
+react-dom
 
-Este proyecto es de uso académico y personal.
+react-router-dom
 
-actualizaciones de proyecto 
+axios
 
-se añadio la validacion para tokens y encriptar los datos sensibles se pide token para crear objetos (persona y productos )
+bootstrap
 
-tambien se mejoro la esteticamente con boobstrap y css 
+jspdf
 
+jspdf-autotable
+
+🖌️ Mejoras recientes
+
+✔️ Se añadió validación de tokens para proteger las rutas.
+✔️ Se implementó encriptación de datos sensibles.
+✔️ Se agregó la gestión de roles de usuario (admin/user).
+✔️ Se bloquea el acceso a productos/personas si no estás logueado.
+✔️ Se mejoró la estética con Bootstrap y CSS personalizado.
+
+📌 Notas importantes
+
+Siempre se ingresa primero al Home, desde allí se debe iniciar sesión.
+
+Para ver los cambios progresivos, revisar los commits en el historial del repo.
+
+🧑‍💻 Autor
+
+Hecho por [Guillermo Cuello] como parte del Práctico Integrador Fullstack.
+
+🗂️ Licencia
+
+Proyecto de uso académico y personal.
