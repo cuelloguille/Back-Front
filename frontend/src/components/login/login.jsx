@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import "./login.css"; // estilos personalizados
+import { toast } from "react-toastify";
 
 function Login() {
   const [username, setUsername] = useState("");
@@ -21,10 +22,10 @@ function Login() {
       localStorage.setItem("role", res.data.user.role);
       localStorage.setItem("username", res.data.user.username);
 
-      alert("Login exitoso");
+      toast.success("Login exitoso");
       navigate("/homeLogueado");
     } catch (err) {
-      alert(err.response?.data?.error || "Error al iniciar sesión");
+      toast.error(err.response?.data?.error || "Error al iniciar sesión");
     } finally {
       setLoading(false);
     }

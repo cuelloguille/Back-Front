@@ -8,6 +8,10 @@ import Home from "./components/home/home";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
+// ✅ Importar Toastify
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 // Componente para rutas privadas
 function PrivateRoute({ children }) {
   const token = localStorage.getItem("token");
@@ -27,6 +31,7 @@ function Layout() {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
+    toast.info("Sesión cerrada 👋"); // ✅ ahora usa toast en vez de alert
     navigate("/login");
   };
 
@@ -89,6 +94,9 @@ function App() {
         {/* Redirección para rutas inexistentes */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+
+      {/* ✅ Contenedor de notificaciones global */}
+      <ToastContainer position="top-right" autoClose={1500} theme="colored" />
     </Router>
   );
 }

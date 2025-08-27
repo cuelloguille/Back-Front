@@ -29,6 +29,21 @@ const register = async (req, res) => {
     return res.status(400).json({ error: 'Faltan datos' });
   }
 
+  if (password.length <= 5 ) {
+    return res.status(400).json({ error: 'La contraseña debe tener al menos 5 caracteres' });
+  }
+  const mayuscula = /[A-Z]/;
+  if (!mayuscula.test(password)) {
+    return res.status(400).json({ error: 'La contraseña debe tener al menos una mayuscula' });
+  }
+
+  if (password.length > 20 ) {
+    return res.status(400).json({ error: 'La contraseña no debe tener mas de 12 caracteres' });
+  }
+  const numero = /[0-9]/;
+  if (!numero.test(password)) {
+    return res.status(400).json({ error: 'La contraseña debe tener al menos un numero' });
+  }
   try {
     let usuarios = getUsuarios();
 
@@ -70,3 +85,4 @@ const register = async (req, res) => {
 };
 
 module.exports = { register };
+

@@ -28,5 +28,29 @@
     "username": "tester",
     "password": "$2b$10$KsM11b.p6rdGFyHsDUZD8u2webnrWK16guOPqGtnC8bsigDigE8UG",
     "role": "user"
+  },
+  {
+    "id": 1756309228215,
+    "username": "usuario",
+    "password": "$2b$10$wZiQrVw4vavXJeP4x6w5SeHa6ZYMgoB0wYt/UhQWW.gDmXFgVQNpy",
+    "role": "user"
+  },
+  {
+    "id": 1756309521111,
+    "username": "hola",
+    "password": "$2b$10$bXyunY77BG7/Fwz5cFV9geyUSirHOznrO9dp7Aht2vhZfBWLjnudC",
+    "role": "user"
+  },
+  {
+    "id": 1756311050844,
+    "username": "aaaaaa",
+    "password": "$2b$10$Zyj7ZKpUsLQzeIHRE9L4AOVa9WaPIytxZ6wo3zCYeCumYUdIq.6Kq",
+    "role": "user"
+  },
+  {
+    "id": 1756311175671,
+    "username": "guille",
+    "password": "$2b$10$C75Alk88Qwz/sYZkV9jhxem7KGPQ/L5ngqBMuIyWTImiOHBnWYc1i",
+    "role": "user"
   }
 ]

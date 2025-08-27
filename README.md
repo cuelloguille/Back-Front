@@ -134,6 +134,10 @@ jspdf-autotable
 ✔️ Se bloquea el acceso a Productos y Personas si el usuario no está logueado.
 ✔️ Se mejoró la estética usando Bootstrap y CSS personalizado.
 ✔️ Se agregaron dos versiones del Home: una para usuarios logueados y otra para usuarios no logueados, de modo que al entrar a la página haya una pantalla de bienvenida antes de acceder a las tablas o funcionalidades.
+✔️ Mejoria en notificaciones para que no se superponga a la pagina
+✔️ Precauciones a la hora del Registro  , numeros , mayusculas (para ver las mismas invito a ver el back)
+✔️ Actualizacion de requirements.txt (Implementacion del toast)
+
 📌 Notas importantes
 
 Siempre se ingresa primero al Home, desde allí se debe iniciar sesión.

@@ -16,7 +16,10 @@ export default function Home() {
         <h3 className="mb-3">Página de administración</h3>
         <p className="mb-4">
           Estás logueado como: <strong>{localStorage.getItem("username")}</strong>
-        </p>
+          
+        </p>  
+        <p>Tu Rol es: <strong>{localStorage.getItem("role")}</strong></p>
+
         <h5 className="mb-4">Puedes ingresar a las siguientes páginas:</h5>
 
         <div className="d-flex justify-content-center gap-3 flex-wrap">
