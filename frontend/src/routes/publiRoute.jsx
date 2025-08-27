@@ -1,16 +1,6 @@
-// src/routes/PublicRoute.jsx
-import { Navigate, Outlet } from "react-router-dom";
-
-const PublicRoute = () => {
+// Componente para rutas públicas
+function PublicRoute({ children }) {
   const token = localStorage.getItem("token");
-
-  // Si hay token, redirige a productos
-  if (token) {
-    return <Navigate to="/productos" replace />;
-  }
-
-  // Si no hay token, renderiza la ruta "hija"
-  return <Outlet />;
-};
-
-export default PublicRoute;
+  // Si el usuario está logueado, lo redirige al home privado
+  return token ? <Navigate to="/homeLogueado" replace /> : children;
+}

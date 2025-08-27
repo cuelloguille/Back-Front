@@ -1,0 +1,36 @@
+.home-background {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.home-background::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/src/components/home/fondo.png'); /* Cambia la ruta si es necesario */
+  background-size: cover;
+  background-position: center;
+  filter: blur(6px) brightness(0.6); /* efecto blur + oscurecido */
+  z-index: 0;
+}
+
+.home-card {
+  position: relative;
+  z-index: 1;
+  background-color: rgba(0, 0, 0, 0.7); /* semi-transparente y oscuro */
+  padding: 3rem;
+  border-radius: 1.5rem;
+  width: 450px;
+  max-width: 90%;
+  text-align: center;
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
+}

@@ -3,10 +3,10 @@ import ProductosView from "./components/Productos/ProductosView";
 import PersonasView from "./components/Personas/personasView";
 import Login from "./components/login/login";
 import Register from "./components/register/register";
+import HomeLogueado from "./components/homeLogueado/homeLogueado";
 import Home from "./components/home/home";  
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-
 
 // Componente para rutas privadas
 function PrivateRoute({ children }) {
@@ -17,7 +17,7 @@ function PrivateRoute({ children }) {
 // Componente para rutas públicas
 function PublicRoute({ children }) {
   const token = localStorage.getItem("token");
-  return token ? <Navigate to="/productos" replace /> : children;
+  return token ? <Navigate to="/homeLogueado" replace /> : children;
 }
 
 // Layout con Navbar (solo se muestra si estás logueado)
@@ -52,7 +52,7 @@ function Layout() {
           </li>
           <li className="nav-item">
             <NavLink
-              to="/"
+              to="/homeLogueado"
               className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}
             >
               Home
@@ -73,26 +73,15 @@ function App() {
     <Router>
       <Routes>
         {/* Rutas públicas */}
-        <Route
-          element={
-            <PublicRoute>
-              <Outlet />
-            </PublicRoute>
-          }
-        >  
+        <Route element={<PublicRoute><Outlet /></PublicRoute>}>
           <Route path="/" element={<Home />} />   
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Route>
 
         {/* Rutas privadas */}
-        <Route
-          element={
-            <PrivateRoute>
-              <Layout />
-            </PrivateRoute>
-          }
-        >
+        <Route element={<PrivateRoute><Layout /></PrivateRoute>}>
+          <Route path="/homeLogueado" element={<HomeLogueado />} /> {/* Home privado */}
           <Route path="/productos" element={<ProductosView />} />
           <Route path="/personas" element={<PersonasView />} />
         </Route>
