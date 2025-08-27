@@ -128,13 +128,12 @@ jspdf
 jspdf-autotable
 
 🖌️ Mejoras recientes
-
 ✔️ Se añadió validación de tokens para proteger las rutas.
 ✔️ Se implementó encriptación de datos sensibles.
-✔️ Se agregó la gestión de roles de usuario (admin/user).
-✔️ Se bloquea el acceso a productos/personas si no estás logueado.
-✔️ Se mejoró la estética con Bootstrap y CSS personalizado.
-
+✔️ Se incorporó la gestión de roles de usuario (admin/user).
+✔️ Se bloquea el acceso a Productos y Personas si el usuario no está logueado.
+✔️ Se mejoró la estética usando Bootstrap y CSS personalizado.
+✔️ Se agregaron dos versiones del Home: una para usuarios logueados y otra para usuarios no logueados, de modo que al entrar a la página haya una pantalla de bienvenida antes de acceder a las tablas o funcionalidades.
 📌 Notas importantes
 
 Siempre se ingresa primero al Home, desde allí se debe iniciar sesión.

@@ -1,7 +1,8 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./register.css"; // 👈 estilos iguales al login
+import { Button } from "react-bootstrap";
+import "./register.css"; // estilos iguales al login
 
 function Register() {
   const [username, setUsername] = useState("");
@@ -29,10 +30,11 @@ function Register() {
   };
 
   return (
-    <div className="register-background">
-      <div className="register-form-container">
+    <div className="register-background d-flex align-items-center justify-content-center">
+      <div className="register-form-container p-4 shadow-lg rounded">
+        <h1 className="text-center mb-4">Registro</h1>
+
         <form onSubmit={handleRegister}>
-          <h1 className="text-center">Registro</h1>
           <div className="mb-3">
             <label htmlFor="username" className="form-label">Usuario</label>
             <input
@@ -41,9 +43,11 @@ function Register() {
               id="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              placeholder="Ingrese su usuario"
               required
             />
           </div>
+
           <div className="mb-3">
             <label htmlFor="password" className="form-label">Contraseña</label>
             <input
@@ -52,20 +56,30 @@ function Register() {
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="Ingrese su contraseña"
               required
             />
           </div>
-          <button
-            type="submit"
-            className="btn btn-primary w-100"
-            disabled={loading}
-          >
+
+          <Button type="submit" variant="primary" className="w-100 mb-3" disabled={loading}>
             {loading ? "Registrando..." : "Registrarse"}
-          </button>
-          <p className="text-center mt-3 text-white">
-            ¿Ya tienes cuenta? <a href="/login" className="text-white">Ingresar</a>
-          </p>
+          </Button>
         </form>
+
+        <div className="d-flex flex-column align-items-center gap-2">
+          <p className="mb-1">
+            ¿Ya tienes cuenta?{" "}
+            <Button variant="link" onClick={() => navigate("/login")}>
+              Ingresar
+            </Button>
+          </p>
+          <p className="mb-0">
+            
+            <Button variant="secondary" onClick={() => navigate("/")}>
+              <i className="bi bi-house-door me-2"></i> Home
+            </Button>
+          </p>
+        </div>
       </div>
     </div>
   );
