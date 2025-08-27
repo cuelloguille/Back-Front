@@ -3,8 +3,10 @@ import ProductosView from "./components/Productos/ProductosView";
 import PersonasView from "./components/Personas/personasView";
 import Login from "./components/login/login";
 import Register from "./components/register/register";
+import Home from "./components/home/home";  
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
+
 
 // Componente para rutas privadas
 function PrivateRoute({ children }) {
@@ -48,6 +50,14 @@ function Layout() {
               Personas
             </NavLink>
           </li>
+          <li className="nav-item">
+            <NavLink
+              to="/"
+              className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}
+            >
+              Home
+            </NavLink>
+          </li>
         </ul>
         <button className="btn btn-outline-danger btn-sm" onClick={handleLogout}>
           Cerrar sesión
@@ -69,7 +79,8 @@ function App() {
               <Outlet />
             </PublicRoute>
           }
-        >
+        >  
+          <Route path="/" element={<Home />} />   
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Route>
@@ -86,9 +97,8 @@ function App() {
           <Route path="/personas" element={<PersonasView />} />
         </Route>
 
-        {/* Redirecciones */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        {/* Redirección para rutas inexistentes */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );

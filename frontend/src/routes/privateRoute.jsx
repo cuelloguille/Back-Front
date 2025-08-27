@@ -6,7 +6,7 @@ const PrivateRoute = () => {
 
   // Si no hay token, redirige a login
   if (!token) {
-    return <Navigate to="/inicio-sesion" replace />;
+    return <Navigate to="/home" replace />;
   }
 
   // Si hay token, renderiza la ruta "hija"

@@ -26,7 +26,7 @@ function Login() {
       console.log("Usuario guardado:", localStorage.getItem("username"));
 
       alert("Login exitoso");
-      navigate("/personas"); // redirige a la página de personas
+      navigate("/home"); // redirige a la página de personas
     } catch (err) {
       alert(err.response?.data?.error || "Error al iniciar sesión");
     } finally {
