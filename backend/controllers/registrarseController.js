@@ -1,88 +1,66 @@
-// controllers/registerController.js
-const fs = require('fs');
-const path = require('path');
-const bcrypt = require('bcrypt'); // para encriptar contraseña
-const jwt = require('jsonwebtoken'); // para generar token
+const Usuario = require('../models/Usuarios');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
-const archivo = path.join(__dirname, '../data/usuarios.json');
-
-// Función auxiliar: leer usuarios
-const getUsuarios = () => {
-  try {
-    const data = fs.readFileSync(archivo, 'utf8') || '[]';
-    return JSON.parse(data);
-  } catch (err) {
-    return [];
-  }
-};
-
-// Función auxiliar: guardar usuarios
-const saveUsuarios = (usuarios) => {
-  fs.writeFileSync(archivo, JSON.stringify(usuarios, null, 2), 'utf8');
-};
-
-// Controlador para registrar
 const register = async (req, res) => {
-  const { username, password, role } = req.body;
-
-  if (!username || !password) {
-    return res.status(400).json({ error: 'Faltan datos' });
-  }
-
-  if (password.length <= 5 ) {
-    return res.status(400).json({ error: 'La contraseña debe tener al menos 5 caracteres' });
-  }
-  const mayuscula = /[A-Z]/;
-  if (!mayuscula.test(password)) {
-    return res.status(400).json({ error: 'La contraseña debe tener al menos una mayuscula' });
-  }
-
-  if (password.length > 20 ) {
-    return res.status(400).json({ error: 'La contraseña no debe tener mas de 12 caracteres' });
-  }
-  const numero = /[0-9]/;
-  if (!numero.test(password)) {
-    return res.status(400).json({ error: 'La contraseña debe tener al menos un numero' });
-  }
   try {
-    let usuarios = getUsuarios();
+    const { username, password, role } = req.body;
 
-    // validar que no exista el usuario
-    const existe = usuarios.find(u => u.username === username);
+    // Validaciones de contraseña
+    if (!username || !password) {
+      return res.status(400).json({ error: 'Faltan datos' });
+    }
+
+    if (password.length <= 5) {
+      return res.status(400).json({ error: 'La contraseña debe tener al menos 5 caracteres' });
+    }
+
+    if (password.length > 20) {
+      return res.status(400).json({ error: 'La contraseña no debe tener más de 20 caracteres' });
+    }
+
+    if (!/[A-Z]/.test(password)) {
+      return res.status(400).json({ error: 'La contraseña debe tener al menos una mayúscula' });
+    }
+
+    if (!/[0-9]/.test(password)) {
+      return res.status(400).json({ error: 'La contraseña debe tener al menos un número' });
+    }
+
+    // Verificar si ya existe el usuario
+    const existe = await Usuario.findOne({ username });
     if (existe) {
       return res.status(400).json({ error: 'El usuario ya existe' });
     }
 
-    // hashear contraseña
+    // Hashear contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const nuevoUsuario = {
-      id: Date.now(), // o algún generador de IDs
+    const nuevoUsuario = new Usuario({
       username,
       password: hashedPassword,
       role: role || 'user'
-    };
+    });
 
-    usuarios.push(nuevoUsuario);
-    saveUsuarios(usuarios);
+    await nuevoUsuario.save();
 
-    // 🔹 Generar token JWT al registrar
+    // Generar token JWT
     const token = jwt.sign(
-      { id: nuevoUsuario.id, username: nuevoUsuario.username, role: nuevoUsuario.role },
-      "secreto123", // clave secreta del servidor
+      { id: nuevoUsuario._id, username: nuevoUsuario.username, role: nuevoUsuario.role },
+      "secreto123", // idealmente en .env
       { expiresIn: "365h" }
     );
 
     res.status(201).json({
       message: 'Usuario registrado con éxito',
-      user: { id: nuevoUsuario.id, username, role: nuevoUsuario.role },
-      token // 🔹 enviamos también el token al frontend
+      user: { id: nuevoUsuario._id, username, role: nuevoUsuario.role },
+      token
     });
+
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Error al registrar usuario' });
+    res.status(500).json({ error: 'Error al registrar usuario', detalle: err.message });
   }
 };
 
 module.exports = { register };
-

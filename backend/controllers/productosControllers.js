@@ -1,44 +1,52 @@
-const fs = require('fs');
-const path = require('path');
-const archivo = path.join(__dirname, '../data/productos.json');
+const Producto = require('../models/Productos');
 
-const getProductos = () => {
+// Listar todos los productos
+exports.listar = async (req, res) => {
   try {
-    const data = fs.readFileSync(archivo, 'utf8') || '[]';
-    return JSON.parse(data);
+    const productos = await Producto.find();
+    res.json(productos);
   } catch (err) {
-    return [];
+    res.status(500).json({ mensaje: 'Error al obtener productos', error: err.message });
   }
 };
 
-const saveProductos = (productos) => {
-  fs.writeFileSync(archivo, JSON.stringify(productos, null, 2));
-};
-
-exports.listar = (req, res) => res.json(getProductos());
-
-exports.crear = (req, res) => {
-  const productos = getProductos();
-  const nuevo = { id: Date.now(), ...req.body };
-  productos.push(nuevo);
-  saveProductos(productos);
-  res.status(201).json(nuevo);
-};
-
-exports.editar = (req, res) => {
-  const productos = getProductos();
-  const index = productos.findIndex(p => p.id == req.params.id);
-  if (index !== -1) {
-    productos[index] = { id: productos[index].id, ...req.body };
-    saveProductos(productos);
-    res.json(productos[index]);
-  } else {
-    res.status(404).json({ mensaje: 'Producto no encontrado' });
+// Crear un producto nuevo
+exports.crear = async (req, res) => {
+  try {
+    const nuevoProducto = new Producto(req.body);
+    await nuevoProducto.save();
+    res.status(201).json(nuevoProducto);
+  } catch (err) {
+    res.status(400).json({ mensaje: 'Error al crear producto', error: err.message });
   }
 };
 
-exports.eliminar = (req, res) => {
-  const productos = getProductos().filter(p => p.id != req.params.id);
-  saveProductos(productos);
-  res.status(204).end();
+// Editar un producto existente
+exports.editar = async (req, res) => {
+  try {
+    const productoActualizado = await Producto.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true } // Devuelve el documento actualizado y valida
+    );
+    if (!productoActualizado) {
+      return res.status(404).json({ mensaje: 'Producto no encontrado' });
+    }
+    res.json(productoActualizado);
+  } catch (err) {
+    res.status(400).json({ mensaje: 'Error al actualizar producto', error: err.message });
+  }
+};
+
+// Eliminar un producto
+exports.eliminar = async (req, res) => {
+  try {
+    const productoEliminado = await Producto.findByIdAndDelete(req.params.id);
+    if (!productoEliminado) {
+      return res.status(404).json({ mensaje: 'Producto no encontrado' });
+    }
+    res.status(204).end();
+  } catch (err) {
+    res.status(500).json({ mensaje: 'Error al eliminar producto', error: err.message });
+  }
 };

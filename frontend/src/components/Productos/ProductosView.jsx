@@ -2,17 +2,20 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ProductoForm from "./productosForm";
+import { toast } from "react-toastify";
 
 const ProductosView = () => {
   const [productos, setProductos] = useState([]);
   const [form, setForm] = useState({ nombre: "", precio: "" });
   const [editId, setEditId] = useState(null);
+
   const navigate = useNavigate();
   const API_URL = "http://localhost:3001/productos";
 
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
 
+  // 🔹 Verificar token y traer productos
   useEffect(() => {
     if (!token) navigate("/login");
     else fetchProductos();
@@ -35,16 +38,21 @@ const ProductosView = () => {
     }
   };
 
+  // 🔹 Crear o editar producto
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       if (editId) {
+        // Editar
         const res = await axios.put(`${API_URL}/${editId}`, form, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setProductos(productos.map((p) => (p.id === editId ? res.data : p)));
+        setProductos(
+          productos.map((p) => (p._id === editId ? res.data : p))
+        );
         setEditId(null);
       } else {
+        // Crear
         const res = await axios.post(API_URL, form, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -53,26 +61,33 @@ const ProductosView = () => {
       setForm({ nombre: "", precio: "" });
     } catch (err) {
       console.error("Error al guardar producto:", err);
+      alert(err.response?.data?.mensaje || "Error al guardar producto");
     }
+    toast.success("producto guardado");
   };
 
-  const handleDelete = async (id) => {
+  // 🔹 Eliminar producto
+  const handleDelete = async (_id) => {
     if (!window.confirm("¿Seguro querés eliminar este producto?")) return;
     try {
-      await axios.delete(`${API_URL}/${id}`, {
+      await axios.delete(`${API_URL}/${_id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setProductos(productos.filter((p) => p.id !== id));
+      setProductos(productos.filter((p) => p._id !== _id));
     } catch (err) {
       console.error("Error al eliminar producto:", err);
+      alert(err.response?.data?.mensaje || "Error al eliminar producto");
     }
+    toast.error("Producto eliminado");
   };
 
+  // 🔹 Preparar formulario para editar
   const handleEdit = (producto) => {
     setForm({ nombre: producto.nombre, precio: producto.precio });
-    setEditId(producto.id);
+    setEditId(producto._id);
   };
 
+  // 🔹 Cancelar edición
   const handleCancel = () => {
     setEditId(null);
     setForm({ nombre: "", precio: "" });
@@ -82,7 +97,7 @@ const ProductosView = () => {
     <div className="container my-4">
       <h2 className="text-center mb-4">Productos</h2>
 
-      {/* Formulario solo visible para admins */}
+      {/* Formulario solo para admins */}
       {role === "admin" && (
         <div className="d-flex justify-content-center mb-4">
           <ProductoForm
@@ -108,7 +123,7 @@ const ProductosView = () => {
           <tbody>
             {productos.length > 0 ? (
               productos.map((p) => (
-                <tr key={p.id}>
+                <tr key={p._id}>
                   <td>{p.nombre}</td>
                   <td>${p.precio}</td>
                   {role === "admin" && (
@@ -121,7 +136,7 @@ const ProductosView = () => {
                       </button>
                       <button
                         className="btn btn-sm btn-danger"
-                        onClick={() => handleDelete(p.id)}
+                        onClick={() => handleDelete(p._id)}
                       >
                         Borrar
                       </button>

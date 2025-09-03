@@ -1,62 +1,69 @@
-const fs = require("fs");
-const path = require("path");
-const bcrypt = require("bcrypt");
+const Usuario = require('../models/Usuarios');
+const bcrypt = require('bcrypt');
 
-const archivo = path.join(__dirname, "../data/usuarios.json");
-
-const getUsuarios = () => {
+// Listar todos los usuarios (sin contraseñas)
+exports.listar = async (req, res) => {
   try {
-    const data = fs.readFileSync(archivo, "utf8") || "[]";
-    return JSON.parse(data);
-  } catch {
-    return [];
+    const usuarios = await Usuario.find({}, '-password'); // excluir password
+    res.json(usuarios);
+  } catch (err) {
+    res.status(500).json({ mensaje: 'Error al obtener usuarios', error: err.message });
   }
-};
-
-const saveUsuarios = (usuarios) => {
-  fs.writeFileSync(archivo, JSON.stringify(usuarios, null, 2));
-};
-
-// Listar todos
-exports.listar = (req, res) => {
-  const usuarios = getUsuarios();
-  res.json(usuarios);
 };
 
 // Crear usuario
 exports.crear = async (req, res) => {
-  const usuarios = getUsuarios();
-  const hashedPassword = await bcrypt.hash(req.body.password, 10);
-  const nuevo = {
-    id: Date.now(),
-    username: req.body.username,
-    role: req.body.role || "user",
-    password: hashedPassword,
-  };
-  usuarios.push(nuevo);
-  saveUsuarios(usuarios);
-  res.status(201).json({ id: nuevo.id, username: nuevo.username, role: nuevo.role });
+  try {
+    const { username, password, role } = req.body;
+
+    // Validar existencia de username
+    const existe = await Usuario.findOne({ username });
+    if (existe) return res.status(400).json({ mensaje: 'El usuario ya existe' });
+
+    // Hashear contraseña
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const nuevoUsuario = new Usuario({ username, password: hashedPassword, role });
+    await nuevoUsuario.save();
+
+    res.status(201).json({ id: nuevoUsuario._id, username: nuevoUsuario.username, role: nuevoUsuario.role });
+  } catch (err) {
+    res.status(400).json({ mensaje: 'Error al crear usuario', error: err.message });
+  }
 };
 
-// Editar usuario (solo admins pueden cambiar role)
+// Editar usuario
 exports.editar = async (req, res) => {
-  const usuarios = getUsuarios();
-  const index = usuarios.findIndex((u) => u.id == req.params.id);
-  if (index === -1) return res.status(404).json({ mensaje: "Usuario no encontrado" });
+  try {
+    const { username, password, role } = req.body;
+    const updateData = {};
 
-  const usuario = usuarios[index];
-  usuario.username = req.body.username || usuario.username;
+    if (username) updateData.username = username;
+    if (password) updateData.password = await bcrypt.hash(password, 10);
+    if (role) updateData.role = role; // solo admins deberían enviarlo
 
-  if (req.body.role) usuario.role = req.body.role; // solo admins lo envían
-  if (req.body.password) usuario.password = await bcrypt.hash(req.body.password, 10);
+    const usuarioActualizado = await Usuario.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true, runValidators: true }
+    ).select('-password');
 
-  saveUsuarios(usuarios);
-  res.json({ id: usuario.id, username: usuario.username, role: usuario.role });
+    if (!usuarioActualizado) return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+
+    res.json(usuarioActualizado);
+  } catch (err) {
+    res.status(400).json({ mensaje: 'Error al actualizar usuario', error: err.message });
+  }
 };
 
 // Eliminar usuario
-exports.eliminar = (req, res) => {
-  const usuarios = getUsuarios().filter((u) => u.id != req.params.id);
-  saveUsuarios(usuarios);
-  res.status(204).end();
+exports.eliminar = async (req, res) => {
+  try {
+    const usuarioEliminado = await Usuario.findByIdAndDelete(req.params.id);
+    if (!usuarioEliminado) return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+
+    res.status(204).end();
+  } catch (err) {
+    res.status(500).json({ mensaje: 'Error al eliminar usuario', error: err.message });
+  }
 };

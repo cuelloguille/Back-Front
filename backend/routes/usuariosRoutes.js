@@ -1,13 +1,18 @@
 const express = require("express");
 const router = express.Router();
 const usuariosController = require("../controllers/usuariosController");
-const verifyToken = require("../middlewares/verifyToken");
-const isAdmin = require("../middlewares/isAdmin");
+const { verifyToken, isAdmin } = require("../middlewares/auth");
 
-// 🔐 rutas protegidas
-router.get("/", verifyToken, usuariosController.listar);          // listar todos
-router.post("/", verifyToken, isAdmin, usuariosController.crear); // solo admins pueden crear
-router.put("/:id", verifyToken, isAdmin, usuariosController.editar); // solo admins
-router.delete("/:id", verifyToken, isAdmin, usuariosController.eliminar); // solo admins
+// Solo usuarios autenticados pueden listar
+router.get("/", verifyToken, usuariosController.listar);
+
+// Crear usuario (solo admins)
+router.post("/", verifyToken, isAdmin, usuariosController.crear);
+
+// Editar usuario (solo admins)
+router.put("/:id", verifyToken, isAdmin, usuariosController.editar);
+
+// Eliminar usuario (solo admins)
+router.delete("/:id", verifyToken, isAdmin, usuariosController.eliminar);
 
 module.exports = router;

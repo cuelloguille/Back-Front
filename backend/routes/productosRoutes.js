@@ -1,11 +1,18 @@
 const express = require("express");
 const router = express.Router();
-const { listar, crear, editar, eliminar } = require("../controllers/productosControllers");
+const productosController = require("../controllers/productosControllers");
+const { verifyToken, isAdmin } = require("../middlewares/auth");
 
-// Ejemplo: todas las rutas abiertas
-router.get("/", listar);
-router.post("/", crear);
-router.put("/:id", editar);
-router.delete("/:id", eliminar);
+// Listar todos los productos (cualquier usuario autenticado)
+router.get("/", verifyToken, productosController.listar);
+
+// Crear producto (solo admins)
+router.post("/", verifyToken, isAdmin, productosController.crear);
+
+// Editar producto (solo admins)
+router.put("/:id", verifyToken, isAdmin, productosController.editar);
+
+// Eliminar producto (solo admins)
+router.delete("/:id", verifyToken, isAdmin, productosController.eliminar);
 
 module.exports = router;

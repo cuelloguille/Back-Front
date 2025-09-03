@@ -2,17 +2,20 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import PersonasForm from "./personasForm";
+import { toast } from "react-toastify";
 
 const PersonasView = () => {
   const [usuarios, setUsuarios] = useState([]);
-  const [form, setForm] = useState({ username: "", role: "" });
+  const [form, setForm] = useState({ username: "", password: "", role: "" });
   const [editId, setEditId] = useState(null);
+
   const navigate = useNavigate();
-  const API_URL = "http://localhost:3001/usuarios";
+  const API_URL = "http://localhost:3001/usuarios"; // tu endpoint de usuarios
 
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
 
+  // 🔹 Verificar token y traer usuarios
   useEffect(() => {
     if (!token) navigate("/login");
     else fetchUsuarios();
@@ -35,47 +38,59 @@ const PersonasView = () => {
     }
   };
 
+  // 🔹 Crear o editar usuario
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       if (editId) {
+        // Editar
         const res = await axios.put(`${API_URL}/${editId}`, form, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setUsuarios(usuarios.map((u) => (u.id === editId ? res.data : u)));
+        setUsuarios(
+          usuarios.map((u) => (u._id === editId ? res.data : u))
+        );
         setEditId(null);
       } else {
+        // Crear
         const res = await axios.post(API_URL, form, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUsuarios([...usuarios, res.data]);
       }
-      setForm({ username: "", role: "" });
+      setForm({ username: "", password: "", role: "" });
     } catch (err) {
       console.error("Error al guardar usuario:", err);
+      alert(err.response?.data?.mensaje || "Error al guardar usuario");
     }
+    toast.success("usuario guardado");
   };
 
-  const handleDelete = async (id) => {
+  // 🔹 Eliminar usuario
+  const handleDelete = async (_id) => {
     if (!window.confirm("¿Seguro querés eliminar este usuario?")) return;
     try {
-      await axios.delete(`${API_URL}/${id}`, {
+      await axios.delete(`${API_URL}/${_id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setUsuarios(usuarios.filter((u) => u.id !== id));
+      setUsuarios(usuarios.filter((u) => u._id !== _id));
     } catch (err) {
       console.error("Error al eliminar usuario:", err);
+      alert(err.response?.data?.mensaje || "Error al eliminar usuario");
     }
+    toast.error("Producto eliminado");
   };
 
+  // 🔹 Preparar formulario para editar
   const handleEdit = (usuario) => {
-    setForm({ username: usuario.username, role: usuario.role });
-    setEditId(usuario.id);
+    setForm({ username: usuario.username, password: "", role: usuario.role });
+    setEditId(usuario._id);
   };
 
+  // 🔹 Cancelar edición
   const handleCancel = () => {
     setEditId(null);
-    setForm({ username: "", role: "" });
+    setForm({ username: "", password: "", role: "" });
   };
 
   return (
@@ -106,7 +121,7 @@ const PersonasView = () => {
           <tbody>
             {usuarios.length > 0 ? (
               usuarios.map((u) => (
-                <tr key={u.id}>
+                <tr key={u._id}>
                   <td>{u.username}</td>
                   <td>{u.role}</td>
                   {role === "admin" && (
@@ -119,7 +134,7 @@ const PersonasView = () => {
                       </button>
                       <button
                         className="btn btn-sm btn-danger"
-                        onClick={() => handleDelete(u.id)}
+                        onClick={() => handleDelete(u._id)}
                       >
                         Borrar
                       </button>
@@ -142,4 +157,3 @@ const PersonasView = () => {
 };
 
 export default PersonasView;
-

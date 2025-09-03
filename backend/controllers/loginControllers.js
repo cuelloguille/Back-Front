@@ -1,41 +1,39 @@
-const fs = require("fs");
-const path = require("path");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-
-const archivo = path.join(__dirname, "../data/usuarios.json");
-
-const getUsuarios = () => {
-  try {
-    const data = fs.readFileSync(archivo, "utf8") || "[]";
-    return JSON.parse(data);
-  } catch {
-    return [];
-  }
-};
+const Usuario = require('../models/Usuarios');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 exports.login = async (req, res) => {
-  const { username, password } = req.body;
-  const usuarios = getUsuarios();
+  try {
+    const { username, password } = req.body;
 
-  const usuario = usuarios.find(u => u.username === username);
-  if (!usuario) return res.status(401).json({ error: "Usuario o contraseña incorrectos" });
+    // Buscar el usuario en MongoDB
+    const usuario = await Usuario.findOne({ username });
+    if (!usuario) {
+      return res.status(401).json({ error: "Usuario o contraseña incorrectos" });
+    }
 
-  const passwordCorrecta = await bcrypt.compare(password, usuario.password);
-  if (!passwordCorrecta) return res.status(401).json({ error: "Usuario o contraseña incorrectos" });
+    // Comparar contraseña
+    const passwordCorrecta = await bcrypt.compare(password, usuario.password);
+    if (!passwordCorrecta) {
+      return res.status(401).json({ error: "Usuario o contraseña incorrectos" });
+    }
 
-  const token = jwt.sign(
-    { id: usuario.id, username: usuario.username, role: usuario.role },
-    "secreto123",
-    { expiresIn: "1h" }
-  );
+    // Generar JWT
+    const token = jwt.sign(
+      { id: usuario._id, username: usuario.username, role: usuario.role },
+      "secreto123", // idealmente ponerlo en .env
+      { expiresIn: "1h" }
+    );
 
-res.json({
-  token,
-  user: {
-    id: usuario.id,
-    username: usuario.username,
-    role: usuario.role
+    res.json({
+      token,
+      user: {
+        id: usuario._id,
+        username: usuario.username,
+        role: usuario.role
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Error al iniciar sesión", detalle: err.message });
   }
-});
 };
