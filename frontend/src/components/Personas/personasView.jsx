@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import PersonasForm from "./personasForm";
 import { toast } from "react-toastify";
+import PersonasForm from "./personasForm";
 
 const PersonasView = () => {
   const [usuarios, setUsuarios] = useState([]);
@@ -10,8 +10,7 @@ const PersonasView = () => {
   const [editId, setEditId] = useState(null);
 
   const navigate = useNavigate();
-  const API_URL = "http://localhost:3001/usuarios"; // tu endpoint de usuarios
-
+  const API_URL = "http://localhost:3001/usuarios";
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
 
@@ -29,8 +28,9 @@ const PersonasView = () => {
       setUsuarios(res.data);
     } catch (err) {
       console.error("Error al cargar usuarios:", err);
+      toast.error("No se pudieron cargar los usuarios");
       if (err.response?.status === 401 || err.response?.status === 403) {
-        alert("Token inválido o expirado. Por favor, inicia sesión de nuevo.");
+        toast.error("Token inválido o expirado. Por favor, inicia sesión de nuevo.");
         localStorage.removeItem("token");
         localStorage.removeItem("role");
         navigate("/login");
@@ -42,28 +42,26 @@ const PersonasView = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      let res;
       if (editId) {
-        // Editar
-        const res = await axios.put(`${API_URL}/${editId}`, form, {
+        res = await axios.put(`${API_URL}/${editId}`, form, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setUsuarios(
-          usuarios.map((u) => (u._id === editId ? res.data : u))
-        );
+        setUsuarios(usuarios.map((u) => (u._id === editId ? res.data : u)));
         setEditId(null);
+        toast.success("Usuario editado correctamente");
       } else {
-        // Crear
-        const res = await axios.post(API_URL, form, {
+        res = await axios.post(API_URL, form, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUsuarios([...usuarios, res.data]);
+        toast.success("Usuario creado correctamente");
       }
       setForm({ username: "", password: "", role: "" });
     } catch (err) {
       console.error("Error al guardar usuario:", err);
-      alert(err.response?.data?.mensaje || "Error al guardar usuario");
+      toast.error(err.response?.data?.mensaje || "Error al guardar usuario");
     }
-    toast.success("usuario guardado");
   };
 
   // 🔹 Eliminar usuario
@@ -74,11 +72,11 @@ const PersonasView = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUsuarios(usuarios.filter((u) => u._id !== _id));
+      toast.success("Usuario eliminado correctamente");
     } catch (err) {
       console.error("Error al eliminar usuario:", err);
-      alert(err.response?.data?.mensaje || "Error al eliminar usuario");
+      toast.error(err.response?.data?.mensaje || "Error al eliminar usuario");
     }
-    toast.error("Producto eliminado");
   };
 
   // 🔹 Preparar formulario para editar

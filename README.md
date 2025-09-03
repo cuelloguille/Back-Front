@@ -127,7 +127,7 @@ jspdf
 
 jspdf-autotable
 
-🖌️ Mejoras recientes
+🖌️ Mejoras 
 ✔️ Se añadió validación de tokens para proteger las rutas.
 ✔️ Se implementó encriptación de datos sensibles.
 ✔️ Se incorporó la gestión de roles de usuario (admin/user).
@@ -137,6 +137,17 @@ jspdf-autotable
 ✔️ Mejoria en notificaciones para que no se superponga a la pagina
 ✔️ Precauciones a la hora del Registro  , numeros , mayusculas (para ver las mismas invito a ver el back)
 ✔️ Actualizacion de requirements.txt (Implementacion del toast)
+
+🖌️ Ultimas mejoras
+✔️ Creacion de Base de Datos externa MongoDB Atlas (no quise usar mysql ya que me parecio importante probrar con una herramienta que se usa al dia de hoy en el sistema laboral)
+✔️ Creacion de scrip al iniciar para que se cree una super usuario y nos permita ver la vista de admin (al principio sale el user y la contraseña)
+✔️ Mejoria en el formulario de crear usuario para que las contraseñas cumplas las mismas validaciones de cuando se registra asi no se tiene incocluencias 
+✔️ Mejora de avisos cuando  eliminamos , editamos y creamos productos lo mismo con personas 
+✔️ Mejoria en el formulario de productos ahora contienen stock y descripcion
+✔️Login con contraseña visible 
+
+
+
 
 📌 Notas importantes
 

@@ -20,6 +20,14 @@ exports.crear = async (req, res) => {
     const existe = await Usuario.findOne({ username });
     if (existe) return res.status(400).json({ mensaje: 'El usuario ya existe' });
 
+
+    if (!username || !password || !role) return res.status(400).json({ mensaje: 'Faltan datos' });
+
+    if (password.length <= 5) return res.status(400).json({ mensaje: 'La contraseña debe tener al menos 5 caracteres' });
+    if (password.length > 20) return res.status(400).json({ mensaje: 'La contraseña no debe tener más de 20 caracteres' });
+    if (!/[A-Z]/.test(password)) return res.status(400).json({ mensaje: 'La contraseña debe tener al menos una mayúscula' });
+    if (!/[0-9]/.test(password)) return res.status(400).json({ mensaje: 'La contraseña debe tener al menos un número' });
+
     // Hashear contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
 

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import "./login.css"; // estilos personalizados
 import { toast } from "react-toastify";
 
@@ -9,6 +9,7 @@ function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); 
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -52,14 +53,21 @@ function Login() {
 
           <div className="mb-3">
             <label htmlFor="password" className="form-label">Contraseña</label>
-            <input
-              type="password"
+            <Form.Control
+              type={showPassword ? "text" : "password"}
               className="form-control"
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Ingrese su contraseña"
               required
+            />
+            <Form.Check
+              type="checkbox"
+              className="mt-2"
+              label="Mostrar contraseña"
+              checked={showPassword}
+              onChange={(e) => setShowPassword(e.target.checked)}
             />
           </div>
 
@@ -76,7 +84,6 @@ function Login() {
             </Button>
           </p>
           <p className="mb-0">
-            
             <Button variant="secondary" onClick={() => navigate("/")}>
               Home
             </Button>

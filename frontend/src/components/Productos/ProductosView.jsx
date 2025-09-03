@@ -6,8 +6,14 @@ import { toast } from "react-toastify";
 
 const ProductosView = () => {
   const [productos, setProductos] = useState([]);
-  const [form, setForm] = useState({ nombre: "", precio: "" });
+  const [form, setForm] = useState({
+    nombre: "",
+    precio: "",
+    stock: "",
+    descripcion: "",
+  });
   const [editId, setEditId] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const API_URL = "http://localhost:3001/productos";
@@ -17,24 +23,32 @@ const ProductosView = () => {
 
   // 🔹 Verificar token y traer productos
   useEffect(() => {
-    if (!token) navigate("/login");
-    else fetchProductos();
+    if (!token) {
+      navigate("/login");
+    } else {
+      fetchProductos();
+    }
   }, [token, navigate]);
 
   const fetchProductos = async () => {
+    setLoading(true);
     try {
-      const res = await axios.get(API_URL, {
+      const { data } = await axios.get(API_URL, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setProductos(res.data);
+      setProductos(data);
     } catch (err) {
       console.error("Error al cargar productos:", err);
       if (err.response?.status === 401 || err.response?.status === 403) {
-        alert("Token inválido o expirado. Por favor, inicia sesión de nuevo.");
+        toast.error("Token inválido o expirado. Inicia sesión de nuevo.");
         localStorage.removeItem("token");
         localStorage.removeItem("role");
         navigate("/login");
+      } else {
+        toast.error("No se pudieron cargar los productos");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -44,26 +58,26 @@ const ProductosView = () => {
     try {
       if (editId) {
         // Editar
-        const res = await axios.put(`${API_URL}/${editId}`, form, {
+        const { data } = await axios.put(`${API_URL}/${editId}`, form, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setProductos(
-          productos.map((p) => (p._id === editId ? res.data : p))
+        setProductos((prev) =>
+          prev.map((p) => (p._id === editId ? data : p))
         );
-        setEditId(null);
+        toast.success("Producto actualizado con éxito");
       } else {
         // Crear
-        const res = await axios.post(API_URL, form, {
+        const { data } = await axios.post(API_URL, form, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setProductos([...productos, res.data]);
+        setProductos((prev) => [...prev, data]);
+        toast.success("Producto creado con éxito");
       }
-      setForm({ nombre: "", precio: "" });
+      resetForm();
     } catch (err) {
       console.error("Error al guardar producto:", err);
-      alert(err.response?.data?.mensaje || "Error al guardar producto");
+      toast.error(err.response?.data?.mensaje || "Error al guardar producto");
     }
-    toast.success("producto guardado");
   };
 
   // 🔹 Eliminar producto
@@ -73,24 +87,30 @@ const ProductosView = () => {
       await axios.delete(`${API_URL}/${_id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setProductos(productos.filter((p) => p._id !== _id));
+      setProductos((prev) => prev.filter((p) => p._id !== _id));
+      
     } catch (err) {
       console.error("Error al eliminar producto:", err);
-      alert(err.response?.data?.mensaje || "Error al eliminar producto");
+      toast.alert(err.response?.data?.mensaje || "Error al eliminar producto");
     }
     toast.error("Producto eliminado");
   };
 
   // 🔹 Preparar formulario para editar
   const handleEdit = (producto) => {
-    setForm({ nombre: producto.nombre, precio: producto.precio });
+    setForm({
+      nombre: producto.nombre,
+      precio: producto.precio,
+      stock: producto.stock,
+      descripcion: producto.descripcion,
+    });
     setEditId(producto._id);
   };
 
-  // 🔹 Cancelar edición
-  const handleCancel = () => {
+  // 🔹 Reset form
+  const resetForm = () => {
     setEditId(null);
-    setForm({ nombre: "", precio: "" });
+    setForm({ nombre: "", precio: "", stock: "", descripcion: "" });
   };
 
   return (
@@ -105,55 +125,66 @@ const ProductosView = () => {
             setForm={setForm}
             handleSubmit={handleSubmit}
             editId={editId}
-            handleCancel={handleCancel}
+            handleCancel={resetForm}
           />
         </div>
       )}
 
       {/* Tabla de productos */}
-      <div className="table-responsive">
-        <table className="table table-hover shadow-sm">
-          <thead className="table-dark">
-            <tr>
-              <th>Nombre</th>
-              <th>Precio</th>
-              {role === "admin" && <th className="text-center">Acciones</th>}
-            </tr>
-          </thead>
-          <tbody>
-            {productos.length > 0 ? (
-              productos.map((p) => (
-                <tr key={p._id}>
-                  <td>{p.nombre}</td>
-                  <td>${p.precio}</td>
-                  {role === "admin" && (
-                    <td className="text-center">
-                      <button
-                        className="btn btn-sm btn-warning me-2"
-                        onClick={() => handleEdit(p)}
-                      >
-                        Editar
-                      </button>
-                      <button
-                        className="btn btn-sm btn-danger"
-                        onClick={() => handleDelete(p._id)}
-                      >
-                        Borrar
-                      </button>
-                    </td>
-                  )}
-                </tr>
-              ))
-            ) : (
+      {loading ? (
+        <p className="text-center text-muted">Cargando productos...</p>
+      ) : (
+        <div className="table-responsive">
+          <table className="table table-hover shadow-sm">
+            <thead className="table-dark">
               <tr>
-                <td colSpan={role === "admin" ? 3 : 2} className="text-center text-muted">
-                  No hay productos registrados
-                </td>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Descripción</th>
+                {role === "admin" && <th className="text-center">Acciones</th>}
               </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {productos.length > 0 ? (
+                productos.map((p) => (
+                  <tr key={p._id}>
+                    <td>{p.nombre}</td>
+                    <td>${p.precio}</td>
+                    <td>{p.stock}</td>
+                    <td>{p.descripcion}</td>
+                    {role === "admin" && (
+                      <td className="text-center">
+                        <button
+                          className="btn btn-sm btn-warning me-2"
+                          onClick={() => handleEdit(p)}
+                        >
+                          Editar
+                        </button>
+                        <button
+                          className="btn btn-sm btn-danger"
+                          onClick={() => handleDelete(p._id)}
+                        >
+                          Borrar
+                        </button>
+                      </td>
+                    )}
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan={role === "admin" ? 5 : 4}
+                    className="text-center text-muted"
+                  >
+                    No hay productos registrados
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };
